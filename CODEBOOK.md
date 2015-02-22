@@ -8,7 +8,7 @@
 
 The data linked to from the course website represent data collected from the accelerometers 
 from the Samsung Galaxy S smartphone. A full description is available at the site where the 
-data was obtained:[UCI Machine Learning Repository]. The data for the project can be downloaded from the link:
+data was obtained: [UCI Machine Learning Repository]. The data for the project can be downloaded from the link:
 https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip. 
 
 The data set: The experiment have been carried out with a group of 30 volunteers (`./UCI HAR Dataset/test/subject_test.txt and ./UCI HAR Dataset/train/subject_train.txt  `)
@@ -26,7 +26,7 @@ features was obtained by calculating variables from the time and frequency domai
 expressed in a 561-feature vector (`features.txt`).
 
  
-##The Project
+##Project
  
  The course project says:
  
@@ -37,7 +37,7 @@ expressed in a 561-feature vector (`features.txt`).
 >  4. Appropriately labels the data set with descriptive variable names. 
 >  5. From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
 
-##The R script `run_analysis.R` 
+##R script `run_analysis.R` 
 
  The folder downloaded has to be in the Working Directory 
  The procedure follows a different order from the one specified in the list above in order to simplify some steps, but they are called and numbered following the instructions in order to facilitate the corrections.
@@ -62,7 +62,9 @@ expressed in a 561-feature vector (`features.txt`).
  >dataY_train<-read.table(file="./UCI HAR Dataset/train/y_train.txt",stringsAsFactors = FALSE)
  ```
  
+ 
  After the data.frames `dataSubject_test, dataY_test, dataSubject_train and dataY_train` are converted to vectors using `[]`.
+ 
  
  ```
  >dataSubject_test<-dataSubject_test[,1]
@@ -78,7 +80,7 @@ expressed in a 561-feature vector (`features.txt`).
  >dataTrain<-data.frame(Subject=dataSubject_train,Activity=dataY_train,dataX_train)
  ```
   
- >After this two data.frame are joined by rows using `rbind`function.
+ After this two data.frame are joined by rows using `rbind`function.
   
   ```  
   >data<-rbind(dataTest,dataTrain)
@@ -91,16 +93,17 @@ expressed in a 561-feature vector (`features.txt`).
  >data[,2]<-as.factor(data[,2])
  >dataActivity_labels<-dataActivity_labels[,2]
  >levels(data[,2])<-dataActivity_labels
-  ```
+ ```
   
-  5. Appropriately labels the data set with descriptive variable names: the assignment of values and propitiate label to the columns is done here for make the filter easy, the labe are in `features.txt`.
-  This file includes characters that can`t be used as names in R (`"-" and "()"`).
-  using the function `gsub()`.
+ 5. Appropriately labels the data set with descriptive variable names: the assignment of values and propitiate label to the columns is done here for make the filter easy, the labe are in `features.txt`.
+ This file includes characters that can`t be used as names in R (`"-" and "()"`).
+ using the function `gsub()`.
   
   ```
   >dataFeatures<-dataFeatures[,2]
   >dataFeatures<-gsub("-","_",dataFeatures)
   >dataFeatures<-gsub("\\(\\)","",dataFeatures)
+  ```
   
   In addition `gsub()`function is used for make changes at the features renaming it with descriptive names. 
  
@@ -111,46 +114,43 @@ expressed in a 561-feature vector (`features.txt`).
   * Mag= Magnitude
   * BodyBody= Body  
   
-  ```
-  >dataFeatures<-gsub("^t","time",dataFeatures)
-  >dataFeatures<-gsub("^f","frequency",dataFeatures)
-  >dataFeatures<-gsub("BodyBody","Body", dataFeatures)
-  >dataFeatures<-gsub("Gyro","Gyroscope",dataFeatures)
-  >dataFeatures<-gsub("Acc","Acceleration",dataFeatures)
-  >dataFeatures<-gsub("Mag","Magnitude",dataFeatures)
-  ```
+ ```
+ >dataFeatures<-gsub("^t","time",dataFeatures)
+ >dataFeatures<-gsub("^f","frequency",dataFeatures)
+ >dataFeatures<-gsub("BodyBody","Body", dataFeatures)
+ >dataFeatures<-gsub("Gyro","Gyroscope",dataFeatures)
+ >dataFeatures<-gsub("Acc","Acceleration",dataFeatures)
+ >dataFeatures<-gsub("Mag","Magnitude",dataFeatures)
+ ```
 
-  And the names are assigned to each column of the dataset using `names()` function.
+ And the names are assigned to each column of the dataset using `names()` function.
  
-  ```
-  >>names(data)[3:dim(data)[2]]<-dataFeatures
-  ```
+ ```
+ >names(data)[3:dim(data)[2]]<-dataFeatures
+ ```
  
-  6. Extracts only the measurements on the mean and standard deviation for each measurement: The column names of data is used to search the measurements relative
+ 6. Extracts only the measurements on the mean and standard deviation for each measurement: The column names of data is used to search the measurements relative
   to mean() and std(). The function `grep()` is used to generate the filter, a vector with the positions found.
   A dataframe are created taking the "Subject" and "Activity" rows (1,2) and the positions founds.
 
-  ```
-  >position<-grep("mean_|std_|mean$|std$",names(data))
-  >DATA<-data[c(1,2,position)]
-  ```
- 
-  >>filter1<-grepl("Subject|Activity|mean|std", names(dataset))
-  >dataset<-dataset[,filter1]
-  >filter2<-grepl("meanFreq", names(dataset))
-  >dataset<-dataset[,!filter2]
+ ```
+ >position<-grep("mean_|std_|mean$|std$",names(data))
+ >DATA<-data[c(1,2,position)] 
+ ```
 
-  7. From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject:Finally, a subset of the dataset `DATA` is created. This subset is created using the packadge `dplyr` and contains only the average of each 
+ 7. From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject:Finally, a subset of the dataset `DATA` is created. This subset is created using the packadge `dplyr` and contains only the average of each 
   variable for each activity and each subject. The subset is saved to a text file using `write.table()` function (with the argument row.name=FALSE).
 
-  ```
-  >library(dplyr)
-  >results<-DATA %>% group_by(Subject,Activity) %>% summarise_each(funs(mean))
-
-  >write.table(results,file="results.txt",row.name=FALSE)
-  ```
+ ```
+ >library(dplyr)
+ >results<-DATA %>% group_by(Subject,Activity) %>% summarise_each(funs(mean))
+ 
+ >write.table(results,file="results.txt",row.name=FALSE)
+ ```
 
 ##Variables
+
+Variables in the script:
  
   - `dataActivity_labels`: vector for activity labeling
   - `dataFeatures`: vector with the 561-features vector labels
@@ -243,14 +243,6 @@ expressed in a 561-feature vector (`features.txt`).
   - frequencyBodyGyroscopeMagnitude
   - frequencyBodyGyroscopeJerkMagnitude
   
-  
-  
- 
- 
- 
- 
- 
- 
+
  
 [UCI Machine Learning Repository]:http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones#
-[here]:https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip 
