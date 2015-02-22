@@ -4,10 +4,10 @@
 
 ##Files:
 
-`CodeBook.md`: a description of the variables, the data, the transformations performed and the results
-`README.md`: a description of the repository
-`run_analysis.R`: R script with the code 
-`results.txt`: Results of the project
+ - `CodeBook.md`: a description of the variables, the data, the transformations performed and the results
+ - `README.md`: a description of the repository
+ - `run_analysis.R`: R script with the code 
+ - `results.txt`: Results of the project
 
 ##Data
 The data for this project was obtained from the following link:
